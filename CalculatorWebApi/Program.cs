@@ -14,28 +14,45 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast");
+app.MapGet("/prime/{number:int}", (int number) =>
+    Results.Ok(new PrimeCheckResponse(number, PrimeChecker.IsPrime(number))))
+    .WithName("CheckPrimeNumber");
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+record PrimeCheckResponse(int Number, bool IsPrime);
+
+static class PrimeChecker
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    public static bool IsPrime(int number)
+    {
+        if (number < 2)
+        {
+            return false;
+        }
+
+        if (number == 2)
+        {
+            return true;
+        }
+
+        if (number % 2 == 0)
+        {
+            return false;
+        }
+
+        var limit = (int)Math.Sqrt(number);
+
+        for (var divisor = 3; divisor <= limit; divisor += 2)
+        {
+            if (number % divisor == 0)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
+
+public partial class Program;
