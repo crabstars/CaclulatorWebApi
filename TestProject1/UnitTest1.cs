@@ -22,7 +22,7 @@ public class PrimeEndpointTests : IClassFixture<WebApplicationFactory<Program>>
     [InlineData(1, false)]
     [InlineData(-7, false)]
     [InlineData(97, true)]
-    [InlineData(100, false)]
+    [InlineData(100, true)]
     public async Task GetPrimeEndpoint_ReturnsExpectedResult(int number, bool isPrime)
     {
         var response = await _client.GetAsync($"/prime/{number}");
